@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- MD3 Core Palette -->
+    <color name="md_theme_light_primary">#FF6F00</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_primaryContainer">#FFE082</color>
+    <color name="md_theme_light_onPrimaryContainer">#261900</color>
+    <color name="md_theme_light_secondary">#785A43</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_secondaryContainer">#FFDDBF</color>
+    <color name="md_theme_light_surface">#FFF8F5</color>
+    <color name="md_theme_light_onSurface">#201A17</color>
+    <color name="md_theme_light_surfaceVariant">#F4DFD1</color>
+    <color name="md_theme_light_onSurfaceVariant">#52443C</color>
+
+    <color name="md_theme_dark_primary">#FFB74D</color>
+    <color name="md_theme_dark_onPrimary">#4A2800</color>
+    <color name="md_theme_dark_primaryContainer">#6A3C00</color>
+    <color name="md_theme_dark_onPrimaryContainer">#FFE082</color>
+    <color name="md_theme_dark_secondary">#E6BEA3</color>
+    <color name="md_theme_dark_onSecondary">#442B19</color>
+    <color name="md_theme_dark_secondaryContainer">#5D422D</color>
+    <color name="md_theme_dark_surface">#18120F</color>
+    <color name="md_theme_dark_onSurface">#EDE0DB</color>
+    <color name="md_theme_dark_surfaceVariant">#52443C</color>
+    <color name="md_theme_dark_onSurfaceVariant">#D7C2B6</color>
+
+    <!-- Widget Specific Colors -->
+    <color name="widget_default_bg">#1E1B18</color>
+    <color name="widget_card_outline">#33FFFFFF</color>
+    <color name="widget_badge_bg">#B3000000</color>
+    <color name="widget_btn_bg">#66000000</color>
+</resources>

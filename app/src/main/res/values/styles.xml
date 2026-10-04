@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme with Material3 -->
+    <style name="Theme.FlameWidget" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <!-- Base widget dimension tokens for pre-Android 12 -->
+    <dimen name="widget_background_radius">24dp</dimen>
+    <dimen name="widget_inner_radius">16dp</dimen>
+</resources>

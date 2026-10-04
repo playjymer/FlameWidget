@@ -1,0 +1,19 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="150dp"
+    android:viewportWidth="200"
+    android:viewportHeight="150">
+    <!-- Rounded preview card -->
+    <path
+        android:fillColor="#1E1B18"
+        android:pathData="M16,0 L184,0 A16,16 0 0 1 200,16 L200,134 A16,16 0 0 1 184,150 L16,150 A16,16 0 0 1 0,134 L0,16 A16,16 0 0 1 16,0 Z" />
+    <path
+        android:fillColor="#FF6F00"
+        android:pathData="M100,35 C90,45 80,60 80,75 C80,86 89,95 100,95 C111,95 120,86 120,75 C120,60 110,45 100,35 Z" />
+    <path
+        android:fillColor="#FFE082"
+        android:pathData="M100,50 C95,58 90,68 90,75 C90,81 94,86 100,86 C106,86 110,81 110,75 C110,68 105,58 100,50 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M70,110 L130,110 L130,116 L70,116 Z" />
+</vector>

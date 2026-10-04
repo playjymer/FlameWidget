@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Main Widget Image (fully rendered with background, corner radius and scale) -->
+    <ImageView
+        android:id="@+id/widget_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:contentDescription="@string/widget_image_desc" />
+
+    <!-- Optional Corner Refresh Button -->
+    <ImageButton
+        android:id="@+id/widget_btn_refresh"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="8dp"
+        android:background="@drawable/widget_icon_button_bg"
+        android:src="@drawable/ic_refresh"
+        android:scaleType="centerInside"
+        android:padding="6dp"
+        android:contentDescription="@string/refresh_desc" />
+
+    <!-- Optional Bottom Title Badge -->
+    <TextView
+        android:id="@+id/widget_title_badge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="8dp"
+        android:background="@drawable/widget_badge_bg"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp"
+        android:textColor="#FFFFFF"
+        android:textSize="11sp"
+        android:visibility="gone" />
+
+    <!-- Loading State -->
+    <ProgressBar
+        android:id="@+id/widget_progress"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <!-- Error / Placeholder State Container (100% RemoteViews safe) -->
+    <LinearLayout
+        android:id="@+id/widget_error_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/widget_surface_background"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/widget_error_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/widget_load_error"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:maxLines="3" />
+    </LinearLayout>
+
+</FrameLayout>

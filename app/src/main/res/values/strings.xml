@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">FlameWidget</string>
+    <string name="widget_name">URL Картинка Виджет</string>
+    <string name="widget_description">Виджет с автообновлением картинок и стриков по ссылке</string>
+    <string name="widget_image_desc">Изображение виджета</string>
+    <string name="widget_load_error">Не удалось загрузить\nНажмите для повтора</string>
+    <string name="refresh_desc">Обновить виджет</string>
+
+    <!-- UI strings -->
+    <string name="title_home">FlameWidget MD3</string>
+    <string name="subtitle_home">Создавайте и настраивайте адаптивные виджеты рабочего стола</string>
+    <string name="tab_create">Создать</string>
+    <string name="tab_active">Активные (%1$d)</string>
+    <string name="tab_templates">Шаблоны</string>
+
+    <string name="url_input_label">URL адрес виджета / картинки</string>
+    <string name="url_input_placeholder">https://...</string>
+    <string name="url_paste">Вставить</string>
+    <string name="url_clear">Очистить</string>
+    <string name="url_test">Проверить</string>
+
+    <string name="widget_title_label">Название виджета (необязательно)</string>
+    <string name="widget_title_placeholder">Название виджета</string>
+
+    <string name="section_sizing">Масштабирование и размер</string>
+    <string name="section_styling">Стиль и оформление</string>
+    <string name="section_behavior">Поведение и обновление</string>
+
+    <string name="scale_mode_fit">По размеру (Fit)</string>
+    <string name="scale_mode_crop">Заполнение (Crop)</string>
+    <string name="scale_mode_blur">Размытый фон</string>
+    <string name="scale_mode_stretch">Растянуть (FitXY)</string>
+
+    <string name="corner_radius_title">Скругление углов</string>
+    <string name="padding_title">Внутренний отступ (Padding)</string>
+    <string name="refresh_interval_title">Период автообновления</string>
+    <string name="tap_action_title">Действие при нажатии</string>
+
+    <string name="btn_add_to_home">Добавить на рабочий стол</string>
+    <string name="btn_save_changes">Сохранить изменения</string>
+    <string name="btn_cancel">Отмена</string>
+    <string name="btn_delete">Удалить</string>
+    <string name="btn_refresh_now">Обновить сейчас</string>
+
+    <string name="msg_pinned_success">Запрос на добавление виджета отправлен!</string>
+    <string name="msg_saved_success">Настройки виджета сохранены!</string>
+    <string name="msg_url_invalid">Пожалуйста, укажите корректную ссылку на изображение (http:// или https://)</string>
+</resources>

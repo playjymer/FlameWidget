@@ -34,7 +34,7 @@ object WidgetUpdater {
 
         scope.launch {
             val options = appWidgetManager.getAppWidgetOptions(appWidgetId)
-            val (widthPx, heightPx) = calculateWidgetSizePx(context, options)
+            val (widthPx, heightPx) = calculateWidgetSizePx(context, options, config.isWide)
 
             val views = RemoteViews(context.packageName, R.layout.widget_flame_layout)
 
@@ -155,23 +155,34 @@ object WidgetUpdater {
         }
     }
 
-    private fun calculateWidgetSizePx(context: Context, options: Bundle?): Pair<Int, Int> {
+    private fun calculateWidgetSizePx(context: Context, options: Bundle?, isWide: Boolean): Pair<Int, Int> {
         val density = context.resources.displayMetrics.density
-        var minWidth = 150
-        var minHeight = 150
+        val orientation = context.resources.configuration.orientation
+        val isPortrait = orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT
+
+        var widthDp = if (isWide) 320 else 200
+        var heightDp = if (isWide) 160 else 200
 
         if (options != null) {
-            val optW = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
-            val optHMin = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0)
-            val optHMax = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
-            val optH = if (optHMin > 0) optHMin else optHMax
+            val optW = if (isPortrait) {
+                options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
+            } else {
+                options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, 0)
+            }
 
-            if (optW > 0) minWidth = optW
-            if (optH > 0) minHeight = optH
+            val optH = if (isPortrait) {
+                options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
+            } else {
+                options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0)
+            }
+
+            if (optW > 0) widthDp = optW
+            if (optH > 0) heightDp = optH
         }
 
-        val pxW = max(100, (minWidth * density).toInt())
-        val pxH = max(100, (minHeight * density).toInt())
+        // Render at crisp high resolution
+        val pxW = max(150, (widthDp * density).toInt())
+        val pxH = max(150, (heightDp * density).toInt())
         return Pair(pxW, pxH)
     }
 }

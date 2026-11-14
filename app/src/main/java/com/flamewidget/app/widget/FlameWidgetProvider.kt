@@ -52,10 +52,18 @@ open class FlameWidgetProvider : AppWidgetProvider() {
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID
             )
+            val appWidgetManager = AppWidgetManager.getInstance(context)
             if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-                val appWidgetManager = AppWidgetManager.getInstance(context)
                 WidgetUpdater.updateWidget(context, appWidgetManager, appWidgetId)
                 Toast.makeText(context, "Обновление виджета...", Toast.LENGTH_SHORT).show()
+            } else {
+                // Refresh all active widgets from both providers
+                val standardIds = appWidgetManager.getAppWidgetIds(android.content.ComponentName(context, FlameWidgetProvider::class.java))
+                val wideIds = appWidgetManager.getAppWidgetIds(android.content.ComponentName(context, FlameWideWidgetProvider::class.java))
+                val allIds = (standardIds.toList() + wideIds.toList()).distinct()
+                for (id in allIds) {
+                    WidgetUpdater.updateWidget(context, appWidgetManager, id)
+                }
             }
         }
     }

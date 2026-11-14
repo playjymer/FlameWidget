@@ -35,7 +35,7 @@ data class WidgetConfig(
     val paddingDp: Int = 4, // 0..20 dp
     val refreshIntervalMinutes: Int = 30, // 0..1440 min
     val tapAction: TapAction = TapAction.REFRESH,
-    val showRefreshButton: Boolean = true,
+    val showRefreshButton: Boolean = false,
     val showTitleBadge: Boolean = false,
     val bypassCache: Boolean = true,
     val isWide: Boolean = false,

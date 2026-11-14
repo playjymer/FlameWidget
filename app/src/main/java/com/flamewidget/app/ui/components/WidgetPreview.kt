@@ -32,7 +32,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -59,9 +61,22 @@ enum class PreviewAspectRatio(val title: String, val ratio: Float, val widthDp: 
 @Composable
 fun WidgetPreviewCard(
     config: WidgetConfig,
+    ratioOverride: PreviewAspectRatio? = null,
+    onRatioChange: (PreviewAspectRatio) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    var selectedRatio by remember { mutableStateOf(PreviewAspectRatio.SQUARE_2X2) }
+    var selectedRatio by rememberSaveable(config.imageUrl) {
+        mutableStateOf(
+            ratioOverride ?: if (config.isWide) PreviewAspectRatio.WIDE_4X2 else PreviewAspectRatio.SQUARE_2X2
+        )
+    }
+
+    // Keep in sync with external override if passed
+    LaunchedEffect(ratioOverride) {
+        if (ratioOverride != null) {
+            selectedRatio = ratioOverride
+        }
+    }
 
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -102,7 +117,10 @@ fun WidgetPreviewCard(
                 PreviewAspectRatio.entries.forEach { ratio ->
                     FilterChip(
                         selected = selectedRatio == ratio,
-                        onClick = { selectedRatio = ratio },
+                        onClick = {
+                            selectedRatio = ratio
+                            onRatioChange(ratio)
+                        },
                         modifier = Modifier.weight(1f),
                         label = {
                             Text(
@@ -217,6 +235,18 @@ fun WidgetPreviewCard(
                                 model = ImageRequest.Builder(LocalContext.current)
                                     .data(config.imageUrl)
                                     .crossfade(true)
+                                    .listener(
+                                        onSuccess = { _, result ->
+                                            val w = result.drawable.intrinsicWidth
+                                            val h = result.drawable.intrinsicHeight
+                                            if (w > 0 && h > 0) {
+                                                val ratio = w.toFloat() / h.toFloat()
+                                                val detected = if (ratio >= 1.35f) PreviewAspectRatio.WIDE_4X2 else PreviewAspectRatio.SQUARE_2X2
+                                                selectedRatio = detected
+                                                onRatioChange(detected)
+                                            }
+                                        }
+                                    )
                                     .build(),
                                 contentDescription = "Widget Image",
                                 contentScale = when (config.scaleMode) {

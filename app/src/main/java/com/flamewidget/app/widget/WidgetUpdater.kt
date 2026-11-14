@@ -74,6 +74,7 @@ object WidgetUpdater {
                 val refreshIntent = Intent(context, FlameWidgetProvider::class.java).apply {
                     action = FlameWidgetProvider.ACTION_REFRESH_WIDGET
                     putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                    data = Uri.parse("flamewidget://refresh/$appWidgetId")
                 }
                 val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
@@ -116,19 +117,30 @@ object WidgetUpdater {
                 val intent = Intent(context, FlameWidgetProvider::class.java).apply {
                     action = FlameWidgetProvider.ACTION_REFRESH_WIDGET
                     putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                    data = Uri.parse("flamewidget://tap/$appWidgetId/refresh")
                 }
                 PendingIntent.getBroadcast(context, appWidgetId * 10 + 2, intent, piFlags)
+            }
+            TapAction.OPEN_BOT -> {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/flameintgbot")).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    data = Uri.parse("flamewidget://tap/$appWidgetId/bot")
+                }
+                PendingIntent.getActivity(context, appWidgetId * 10 + 6, intent, piFlags)
             }
             TapAction.OPEN_EDITOR -> {
                 val intent = Intent(context, WidgetConfigActivity::class.java).apply {
                     putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    data = Uri.parse("flamewidget://tap/$appWidgetId/editor")
                 }
                 PendingIntent.getActivity(context, appWidgetId * 10 + 3, intent, piFlags)
             }
             TapAction.OPEN_URL -> {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(config.imageUrl)).apply {
+                val targetUrl = config.imageUrl.ifBlank { "https://t.me/flameintgbot" }
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl)).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    data = Uri.parse("flamewidget://tap/$appWidgetId/url")
                 }
                 PendingIntent.getActivity(context, appWidgetId * 10 + 4, intent, piFlags)
             }
@@ -136,6 +148,7 @@ object WidgetUpdater {
                 val intent = Intent(context, MainActivity::class.java).apply {
                     putExtra("OPEN_PREVIEW_URL", config.imageUrl)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    data = Uri.parse("flamewidget://tap/$appWidgetId/fullscreen")
                 }
                 PendingIntent.getActivity(context, appWidgetId * 10 + 5, intent, piFlags)
             }
@@ -149,7 +162,10 @@ object WidgetUpdater {
 
         if (options != null) {
             val optW = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
-            val optH = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
+            val optHMin = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0)
+            val optHMax = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
+            val optH = if (optHMin > 0) optHMin else optHMax
+
             if (optW > 0) minWidth = optW
             if (optH > 0) minHeight = optH
         }

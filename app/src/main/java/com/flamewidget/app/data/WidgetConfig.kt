@@ -19,6 +19,7 @@ enum class BackgroundStyle(val title: String, val colorHex: Long) {
 
 enum class TapAction(val title: String, val subtitle: String) {
     REFRESH("Обновить картинку", "Мгновенно перезагружает виджет с сервера"),
+    OPEN_BOT("Открыть Telegram-бота", "Перейти в @flameintgbot"),
     OPEN_EDITOR("Открыть редактор", "Изменить ссылку, размер или оформление"),
     OPEN_URL("Открыть в браузере", "Перейти по ссылке виджета"),
     VIEW_FULLSCREEN("Просмотр на весь экран", "Открыть полноразмерное изображение")
@@ -37,5 +38,6 @@ data class WidgetConfig(
     val showRefreshButton: Boolean = true,
     val showTitleBadge: Boolean = false,
     val bypassCache: Boolean = true,
+    val isWide: Boolean = false,
     val lastUpdated: Long = System.currentTimeMillis()
 )

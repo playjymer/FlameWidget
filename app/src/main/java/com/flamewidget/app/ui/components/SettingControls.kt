@@ -19,7 +19,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.OpenInNew
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.TouchApp
@@ -65,6 +69,7 @@ fun UrlInputSection(
     onTitleChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
 
     Card(
@@ -83,7 +88,7 @@ fun UrlInputSection(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Вставьте прямую ссылку на изображение или веб-виджет",
+                text = "Вставьте прямую ссылку на изображение или веб-виджет FlameBot",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -105,6 +110,16 @@ fun UrlInputSection(
                 },
                 trailingIcon = {
                     Row {
+                        if (url.startsWith("http://", ignoreCase = true) || url.startsWith("https://", ignoreCase = true)) {
+                            IconButton(onClick = {
+                                try {
+                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                    context.startActivity(intent)
+                                } catch (_: Exception) {}
+                            }) {
+                                Icon(Icons.Default.OpenInNew, contentDescription = "Открыть в браузере")
+                            }
+                        }
                         if (url.isNotEmpty()) {
                             IconButton(onClick = { onUrlChange("") }) {
                                 Icon(Icons.Default.Clear, contentDescription = "Очистить")

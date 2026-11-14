@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.widget.Toast
 import com.flamewidget.app.data.WidgetPreferences
 
-class FlameWidgetProvider : AppWidgetProvider() {
+open class FlameWidgetProvider : AppWidgetProvider() {
 
     companion object {
         const val ACTION_REFRESH_WIDGET = "com.flamewidget.app.ACTION_REFRESH_WIDGET"

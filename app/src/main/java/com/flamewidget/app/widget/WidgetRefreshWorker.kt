@@ -19,13 +19,12 @@ class WidgetRefreshWorker(
 
     override suspend fun doWork(): Result {
         val appWidgetManager = AppWidgetManager.getInstance(appContext)
-        val providerComponent = ComponentName(appContext, FlameWidgetProvider::class.java)
-        val appWidgetIds = appWidgetManager.getAppWidgetIds(providerComponent)
+        val standardIds = appWidgetManager.getAppWidgetIds(ComponentName(appContext, FlameWidgetProvider::class.java))
+        val wideIds = appWidgetManager.getAppWidgetIds(ComponentName(appContext, FlameWideWidgetProvider::class.java))
+        val allIds = (standardIds.toList() + wideIds.toList()).distinct()
 
-        if (appWidgetIds.isNotEmpty()) {
-            for (appWidgetId in appWidgetIds) {
-                WidgetUpdater.updateWidget(appContext, appWidgetManager, appWidgetId)
-            }
+        for (appWidgetId in allIds) {
+            WidgetUpdater.updateWidget(appContext, appWidgetManager, appWidgetId)
         }
 
         return Result.success()

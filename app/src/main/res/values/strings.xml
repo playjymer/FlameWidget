@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">FlameWidget</string>
-    <string name="widget_name">URL Картинка Виджет</string>
+    <string name="widget_name">FlameWidget (Квадратный 2×2)</string>
+    <string name="wide_widget_name">FlameWidget (Широкий 4×2)</string>
     <string name="widget_description">Виджет с автообновлением картинок и стриков по ссылке</string>
+    <string name="wide_widget_description">Широкий виджет для статусов, прогресса и баннеров FlameBot</string>
     <string name="widget_image_desc">Изображение виджета</string>
     <string name="widget_load_error">Не удалось загрузить\nНажмите для повтора</string>
     <string name="refresh_desc">Обновить виджет</string>

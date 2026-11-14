@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
         android:name=".FlameWidgetApplication"
@@ -24,6 +25,31 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Custom Scheme Deep Link: flamewidget://widget?url=... -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="flamewidget" />
+            </intent-filter>
+
+            <!-- Direct FlameBot Widget URL Handler: https://api.flamebot.app/dev/widget/... -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="api.flamebot.app" android:pathPrefix="/dev/widget" />
+                <data android:scheme="https" android:host="api.flamebot.app" android:pathPrefix="/widget" />
+                <data android:scheme="https" android:host="flamewidget.app" android:pathPrefix="/widget" />
+            </intent-filter>
+
+            <!-- Share Text / URL from other apps -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
         </activity>
 
         <!-- Widget Configuration Activity (launched when adding widget from launcher or via tap) -->
@@ -37,7 +63,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Home Screen App Widget Provider -->
+        <!-- Standard Square 2x2 App Widget Provider -->
         <receiver
             android:name=".widget.FlameWidgetProvider"
             android:exported="true"
@@ -50,6 +76,31 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/flame_widget_info" />
         </receiver>
+
+        <!-- Wide 4x2 App Widget Provider -->
+        <receiver
+            android:name=".widget.FlameWideWidgetProvider"
+            android:exported="true"
+            android:label="@string/wide_widget_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.flamewidget.app.ACTION_REFRESH_WIDGET" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/flame_wide_widget_info" />
+        </receiver>
+
+        <!-- FileProvider for installing downloaded APK updates -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
         <!-- Boot Completed Receiver to restore background periodic updates -->
         <receiver

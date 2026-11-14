@@ -45,6 +45,7 @@ import com.flamewidget.app.ui.components.BackgroundStyleSection
 import com.flamewidget.app.ui.components.BehaviorSettingsSection
 import com.flamewidget.app.ui.components.DimensionsSliderSection
 import com.flamewidget.app.ui.components.ScaleModeSection
+import com.flamewidget.app.ui.components.PreviewAspectRatio
 import com.flamewidget.app.ui.components.UrlInputSection
 import com.flamewidget.app.ui.components.WidgetPreviewCard
 import com.flamewidget.app.ui.theme.FlameWidgetTheme
@@ -111,7 +112,11 @@ class WidgetConfigActivity : ComponentActivity() {
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         item {
-                            WidgetPreviewCard(config = config)
+                            WidgetPreviewCard(
+                                config = config,
+                                ratioOverride = if (config.isWide) PreviewAspectRatio.WIDE_4X2 else PreviewAspectRatio.SQUARE_2X2,
+                                onRatioChange = { config = config.copy(isWide = (it == PreviewAspectRatio.WIDE_4X2)) }
+                            )
                         }
 
                         // Save & Apply Button

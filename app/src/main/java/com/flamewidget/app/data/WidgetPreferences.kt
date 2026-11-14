@@ -24,7 +24,12 @@ class WidgetPreferences(context: Context) {
         private const val PREFIX_SHOW_REFRESH = "show_refresh_"
         private const val PREFIX_SHOW_BADGE = "show_badge_"
         private const val PREFIX_BYPASS_CACHE = "bypass_cache_"
+        private const val PREFIX_IS_WIDE = "is_wide_"
         private const val PREFIX_LAST_UPDATED = "last_updated_"
+    }
+
+    fun hasWidgetConfig(appWidgetId: Int): Boolean {
+        return prefs.contains(PREFIX_URL + appWidgetId)
     }
 
     fun saveLatestDraft(config: WidgetConfig) {
@@ -40,6 +45,7 @@ class WidgetPreferences(context: Context) {
         editor.putBoolean(KEY_LATEST_DRAFT + "_show_refresh", config.showRefreshButton)
         editor.putBoolean(KEY_LATEST_DRAFT + "_show_badge", config.showTitleBadge)
         editor.putBoolean(KEY_LATEST_DRAFT + "_bypass_cache", config.bypassCache)
+        editor.putBoolean(KEY_LATEST_DRAFT + "_is_wide", config.isWide)
         editor.apply()
     }
 
@@ -68,63 +74,72 @@ class WidgetPreferences(context: Context) {
             tapAction = tapAction,
             showRefreshButton = prefs.getBoolean(KEY_LATEST_DRAFT + "_show_refresh", default.showRefreshButton),
             showTitleBadge = prefs.getBoolean(KEY_LATEST_DRAFT + "_show_badge", default.showTitleBadge),
-            bypassCache = prefs.getBoolean(KEY_LATEST_DRAFT + "_bypass_cache", default.bypassCache)
+            bypassCache = prefs.getBoolean(KEY_LATEST_DRAFT + "_bypass_cache", default.bypassCache),
+            isWide = prefs.getBoolean(KEY_LATEST_DRAFT + "_is_wide", default.isWide)
         )
     }
 
-    fun saveWidgetConfig(config: WidgetConfig) {
+    fun saveWidgetConfig(config: WidgetConfig, updateDraft: Boolean = false) {
         val editor = prefs.edit()
         val id = config.id
 
-        editor.putString(PREFIX_URL + id, config.imageUrl)
-        editor.putString(PREFIX_TITLE + id, config.title)
-        editor.putString(PREFIX_SCALE_MODE + id, config.scaleMode.name)
-        editor.putString(PREFIX_BG_STYLE + id, config.backgroundStyle.name)
-        editor.putInt(PREFIX_CORNER_RADIUS + id, config.cornerRadiusDp)
-        editor.putInt(PREFIX_PADDING + id, config.paddingDp)
-        editor.putInt(PREFIX_INTERVAL + id, config.refreshIntervalMinutes)
-        editor.putString(PREFIX_TAP_ACTION + id, config.tapAction.name)
-        editor.putBoolean(PREFIX_SHOW_REFRESH + id, config.showRefreshButton)
-        editor.putBoolean(PREFIX_SHOW_BADGE + id, config.showTitleBadge)
-        editor.putBoolean(PREFIX_BYPASS_CACHE + id, config.bypassCache)
-        editor.putLong(PREFIX_LAST_UPDATED + id, config.lastUpdated)
+        if (id != android.appwidget.AppWidgetManager.INVALID_APPWIDGET_ID) {
+            editor.putString(PREFIX_URL + id, config.imageUrl)
+            editor.putString(PREFIX_TITLE + id, config.title)
+            editor.putString(PREFIX_SCALE_MODE + id, config.scaleMode.name)
+            editor.putString(PREFIX_BG_STYLE + id, config.backgroundStyle.name)
+            editor.putInt(PREFIX_CORNER_RADIUS + id, config.cornerRadiusDp)
+            editor.putInt(PREFIX_PADDING + id, config.paddingDp)
+            editor.putInt(PREFIX_INTERVAL + id, config.refreshIntervalMinutes)
+            editor.putString(PREFIX_TAP_ACTION + id, config.tapAction.name)
+            editor.putBoolean(PREFIX_SHOW_REFRESH + id, config.showRefreshButton)
+            editor.putBoolean(PREFIX_SHOW_BADGE + id, config.showTitleBadge)
+            editor.putBoolean(PREFIX_BYPASS_CACHE + id, config.bypassCache)
+            editor.putBoolean(PREFIX_IS_WIDE + id, config.isWide)
+            editor.putLong(PREFIX_LAST_UPDATED + id, config.lastUpdated)
 
-        val currentIds = getActiveWidgetIds().toMutableSet()
-        if (id > 0) {
+            val currentIds = getActiveWidgetIds().toMutableSet()
             currentIds.add(id.toString())
             editor.putStringSet(KEY_WIDGET_IDS, currentIds)
         }
 
         editor.apply()
-        saveLatestDraft(config)
+
+        if (updateDraft) {
+            saveLatestDraft(config)
+        }
     }
 
     fun loadWidgetConfig(appWidgetId: Int): WidgetConfig {
         val id = appWidgetId
-        val draft = getLatestDraft().copy(id = id)
+        val isSaved = hasWidgetConfig(id)
 
-        val url = prefs.getString(PREFIX_URL + id, draft.imageUrl) ?: draft.imageUrl
-        val title = prefs.getString(PREFIX_TITLE + id, draft.title) ?: draft.title
+        // Only fall back to latest draft if this widget has never been saved before!
+        val fallback = if (isSaved) WidgetConfig(id = id) else getLatestDraft().copy(id = id)
+
+        val url = prefs.getString(PREFIX_URL + id, fallback.imageUrl) ?: fallback.imageUrl
+        val title = prefs.getString(PREFIX_TITLE + id, fallback.title) ?: fallback.title
 
         val scaleMode = try {
-            ScaleMode.valueOf(prefs.getString(PREFIX_SCALE_MODE + id, draft.scaleMode.name) ?: draft.scaleMode.name)
-        } catch (_: Exception) { draft.scaleMode }
+            ScaleMode.valueOf(prefs.getString(PREFIX_SCALE_MODE + id, fallback.scaleMode.name) ?: fallback.scaleMode.name)
+        } catch (_: Exception) { fallback.scaleMode }
 
         val bgStyle = try {
-            BackgroundStyle.valueOf(prefs.getString(PREFIX_BG_STYLE + id, draft.backgroundStyle.name) ?: draft.backgroundStyle.name)
-        } catch (_: Exception) { draft.backgroundStyle }
+            BackgroundStyle.valueOf(prefs.getString(PREFIX_BG_STYLE + id, fallback.backgroundStyle.name) ?: fallback.backgroundStyle.name)
+        } catch (_: Exception) { fallback.backgroundStyle }
 
         val tapAction = try {
-            TapAction.valueOf(prefs.getString(PREFIX_TAP_ACTION + id, draft.tapAction.name) ?: draft.tapAction.name)
-        } catch (_: Exception) { draft.tapAction }
+            TapAction.valueOf(prefs.getString(PREFIX_TAP_ACTION + id, fallback.tapAction.name) ?: fallback.tapAction.name)
+        } catch (_: Exception) { fallback.tapAction }
 
-        val cornerRadius = prefs.getInt(PREFIX_CORNER_RADIUS + id, draft.cornerRadiusDp)
-        val padding = prefs.getInt(PREFIX_PADDING + id, draft.paddingDp)
-        val interval = prefs.getInt(PREFIX_INTERVAL + id, draft.refreshIntervalMinutes)
-        val showRefresh = prefs.getBoolean(PREFIX_SHOW_REFRESH + id, draft.showRefreshButton)
-        val showBadge = prefs.getBoolean(PREFIX_SHOW_BADGE + id, draft.showTitleBadge)
-        val bypassCache = prefs.getBoolean(PREFIX_BYPASS_CACHE + id, draft.bypassCache)
-        val lastUpdated = prefs.getLong(PREFIX_LAST_UPDATED + id, draft.lastUpdated)
+        val cornerRadius = prefs.getInt(PREFIX_CORNER_RADIUS + id, fallback.cornerRadiusDp)
+        val padding = prefs.getInt(PREFIX_PADDING + id, fallback.paddingDp)
+        val interval = prefs.getInt(PREFIX_INTERVAL + id, fallback.refreshIntervalMinutes)
+        val showRefresh = prefs.getBoolean(PREFIX_SHOW_REFRESH + id, fallback.showRefreshButton)
+        val showBadge = prefs.getBoolean(PREFIX_SHOW_BADGE + id, fallback.showTitleBadge)
+        val bypassCache = prefs.getBoolean(PREFIX_BYPASS_CACHE + id, fallback.bypassCache)
+        val isWide = prefs.getBoolean(PREFIX_IS_WIDE + id, fallback.isWide)
+        val lastUpdated = prefs.getLong(PREFIX_LAST_UPDATED + id, fallback.lastUpdated)
 
         return WidgetConfig(
             id = id,
@@ -139,6 +154,7 @@ class WidgetPreferences(context: Context) {
             showRefreshButton = showRefresh,
             showTitleBadge = showBadge,
             bypassCache = bypassCache,
+            isWide = isWide,
             lastUpdated = lastUpdated
         )
     }
